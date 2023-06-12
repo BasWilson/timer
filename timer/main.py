@@ -60,7 +60,7 @@ def main():
         cursor.execute(
             """
             DELETE FROM timer
-            WHERE project = ? AND end_time IS NULL;
+            WHERE project = ?;
             """,
             (project,),
         )

@@ -1,6 +1,7 @@
 import sys
 import sqlite3
 import time
+from interval_timer import IntervalTimer
 
 connection = sqlite3.connect("timer.db")
 
@@ -9,7 +10,7 @@ def main():
     args = sys.argv[1:]
 
     if len(args) < 1:
-        print("Usage: timer <action> <project?>")
+        print("Usage: timer <action> <project | subaction?>")
         exit(1)
 
     action = args[0]
@@ -32,30 +33,41 @@ def main():
 
     # Insert a row of data
     if action == "list":
-        results = cursor.execute(
-            """
-            SELECT project, start_time, end_time
-            FROM timer
-            WHERE end_time IS NULL
-            ORDER BY start_time DESC;
-            """
-        ).fetchall()
-        print("Project\t\t\tStart Time\t\t\tDuration")
-        for result in results:
-            project, start_time, _ = result
-            formattedStartTime = time.strftime(
-                "%Y-%m-%d %H:%M:%S", time.localtime(start_time / 1000)
-            )
-            runningFor = timeInMilliseconds - start_time  # in milliseconds
-            minutes = int(runningFor / 1000 / 60)
-            formattedMinutes = (
-                f"{minutes} minutes" if minutes > 0 else "less than a minute"
-            )
-            print(
-                f"{project}\t\
-                {formattedStartTime}\t\
-                {formattedMinutes}"
-            )
+
+        def list():
+            results = cursor.execute(
+                """
+                SELECT project, start_time, end_time
+                FROM timer
+                WHERE end_time IS NULL
+                ORDER BY start_time DESC;
+                """
+            ).fetchall()
+            print("Project\t\t\tStart Time\t\t\tDuration")
+            for result in results:
+                project, start_time, _ = result
+                formattedStartTime = time.strftime(
+                    "%Y-%m-%d %H:%M:%S", time.localtime(start_time / 1000)
+                )
+                runningFor = timeInMilliseconds - start_time  # in milliseconds
+                minutes = int(runningFor / 1000 / 60)
+                formattedMinutes = (
+                    f"{minutes} minutes" if minutes > 0 else "less than a minute"
+                )
+                print(
+                    f"{project}\t\
+                    {formattedStartTime}\t\
+                    {formattedMinutes}"
+                )
+
+        if project == "interval":
+            for interval in IntervalTimer(1):
+                # clear output
+                print("\033c")
+                list()
+        else:
+            list()
+
     elif action == "delete":
         cursor.execute(
             """

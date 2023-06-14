@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "timer"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Bas Wilson <friedcatps@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+interval-timer = "^1.0.0"
 
 [tool.poetry.scripts]
 timer = "timer.main:main"

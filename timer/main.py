@@ -1,9 +1,12 @@
+import os
 import sys
 import sqlite3
 import time
 from interval_timer import IntervalTimer
 
-connection = sqlite3.connect("timer.db")
+base = os.path.realpath(os.path.dirname(__file__))
+dbpath = f"{base}/../timer.db"
+connection = sqlite3.connect(dbpath)
 
 
 def main():
